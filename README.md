@@ -54,6 +54,6 @@ $ cd postalcode_docker/
 $ docker-compose up
 ```
 
-This will download the followign docker images: php and mongo, and using the Dockerfile and DockerfileDB will build the base images for the project and start the containers for the first time. Also this will create and seed the database using ths json file genearted in the previous step.
+This will download the followign docker images: php and mongo, and using the Dockerfile and DockerfileDB will build the base images for the project and start the containers for the first time. Also this will create and seed the database using the json file genearted in the previous step.
 
 - Once the containers are created and running, we can simply stop and start them (there is not need to rebuild unless the base images have new changes)

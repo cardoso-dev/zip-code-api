@@ -15,4 +15,4 @@ use App\Http\Controllers\ZipCodeController;
 |
 */
 
-Route::get('/zip-codes/{code}', [ZipCodeController::class, 'show']);
+Route::get('/zip-codes/{code}', [ZipCodeController::class, 'show'])->where('code', '[0-9]{5}');;
