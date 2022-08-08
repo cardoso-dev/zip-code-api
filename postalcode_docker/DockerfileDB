@@ -1,0 +1,4 @@
+FROM mongo
+
+COPY data.json /data.json
+CMD mongoimport --host postalcode_mongodb --db postcodes --collection cpcollection --type json --file data.json --jsonArray

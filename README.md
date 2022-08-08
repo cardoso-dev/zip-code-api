@@ -1,64 +1,59 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Postal Code API
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## About the project
 
-## About Laravel
+This project is a single API for consulting mexican zip codes related data.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The API has only one endpoint `/api/zip-codes/{zip_code}` to GET the data related to a specific zip code.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The source data comes from [correos de México website](https://www.correosdemexico.gob.mx/SSLServicios/ConsultaCP/CodigoPostal_Exportar.aspx)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The project is developed using the following stack
+- [Laravel framework](https://laravel.com/)
+- [Mongodb](https://mongodb.com/) as database
+- [Docker](https://www.docker.com/) as container system
 
-## Learning Laravel
+## Solution
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+The solution developed followed the describe steps:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Download source data from correos de Mexico, the site offers three formats: excel, txt and xml. Download xml format.
+- Transform the xml file to a json format file, for this use the python script already included in this repository.
+- Create a NoSQL database using the json from the previos step.
+- Develop a single endpoint API with Laravel consulting the DB created in the previous step.
+- To make easy the development process everything is containerized using docker.
 
-## Laravel Sponsors
+For further details read the following section.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Installation steps
 
-### Premium Partners
+Before installing a copy and in order to be able to complete the process you need to have a system with the following software already installed:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+- [git](https://git-scm.com/)
+- [python](https://www.python.org/) *version 3.x*
+- [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/)
 
-## Contributing
+To install a development copy environment follow the next steps: 
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Clone the project:
+```bash
+$ git clone 
+```
 
-## Code of Conduct
+- Download xml source data [from here](https://www.correosdemexico.gob.mx/SSLServicios/ConsultaCP/CodigoPostal_Exportar.aspx). Uncompress the xml file and put it whitin the project folder `/postalcode_docker/CPdescarga.xml`. (**Important to keep the same name as described: CPdescarga.xml**)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- Use the script `convert_xml_to_json.py` in `/postalcode_docker/` to transform the xml file to a json file:
+```bash
+$ cd postalcode_docker/
+$ python3 convert_xml_to_json.py
+```
 
-## Security Vulnerabilities
+- With the json generated we are ready to build the docker images and start the containers, run the following commands:
+```bash
+$ cd postalcode_docker/
+$ docker-compose up
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+This will download the followign docker images: php and mongo, and using the Dockerfile and DockerfileDB will build the base images for the project and start the containers for the first time. Also this will create and seed the database using ths json file genearted in the previous step.
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Once the containers are created and running, we can simply stop and start them (there is not need to rebuild unless the base images have new changes)

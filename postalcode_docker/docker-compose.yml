@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+ postalcode_api:
+  build:
+   context: ../
+   dockerfile: postalcode_docker/Dockerfile
+  ports:
+   - 127.0.0.1:8000:8000
+  hostname: postalcode_api
+  volumes:
+   - ../:/home
+  working_dir:
+    /home
+  command: php artisan serve --host 0.0.0.0
+
+ postalcode_mongodb:
+  image: mongo
+  hostname: postalcode_mongodb
+  ports:
+   - 127.0.0.1:27017:27017
+
+ postalcode_mongodb_seed:
+  build:
+   context: ./
+   dockerfile: DockerfileDB
+  restart: on-failure
+  depends_on:
+    - postalcode_mongodb
