@@ -37,7 +37,7 @@ To install a development copy environment follow the next steps:
 
 - Clone the project:
 ```bash
-$ git clone 
+$ git clone https://github.com/cardoso-dev/zip-code-api
 ```
 
 - Download xml source data [from here](https://www.correosdemexico.gob.mx/SSLServicios/ConsultaCP/CodigoPostal_Exportar.aspx). Uncompress the xml file and put it whitin the project folder `/postalcode_docker/CPdescarga.xml`. (**Important to keep the same name as described: CPdescarga.xml**)
